@@ -1,14 +1,13 @@
 public class Slime extends Musuh {
     public Slime() {
-        this.namaMusuh = "Slime Hijau";
-        this.healthPoint = 50;
+        super("Slime Hijau", 50);
     }
 
     @Override
-    public void terimaDamage(int damage) {
-        super.terimaDamage((damage));
-        System.out.println("Efek Pasif: " + this.namaMusuh + " membelah diri menjadi dua karena diserang!");
+    public void serangPemain(){
+        System.out.println(this.namaMusuh + " melompat dan menyiram cairan asam! Player -15 HP");
     }
-
+    public void suaraKhas(){
+        System.out.println(this.namaMusuh + " pluk pluk");
+    }
 }
- 
