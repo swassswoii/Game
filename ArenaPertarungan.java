@@ -16,14 +16,17 @@ public class ArenaPertarungan {
         boolean isBermain = true;
         while (isBermain) {
             System.out.println("\n=== STATUS MONSTER ===");
-            
+
             for (int i = 0; i < gelombangMonster.length; i++) {
-                System.out.println((i+1) + ". "
-            + gelombangMonster[i].namaMusuh + " (HP:"
-            + gelombangMonster[i].healthPoint + ")");
+                if (gelombangMonster[i].healthPoint > 0) {
+                    System.out.println((i + 1) + ". " + gelombangMonster[i].namaMusuh
+                            + " (HP; " + gelombangMonster[i].healthPoint + ")");
+                } else {
+                    System.out.println((i + 1) + ". " + gelombangMonster[i].namaMusuh + " [TEWAS]");
+                }
             }
-            System.out.println("4. Kabur dari pertarungan");
-            System.out.println("\nPilih target monster yang ingin diserang (1/2/3) atau 4 untuk kabur: ");
+            System.out.println("5. Kabur dari pertarungan");
+
             int pilihanTarget = input.nextInt();
 
             if (pilihanTarget == 4) {
@@ -41,19 +44,45 @@ public class ArenaPertarungan {
 
                 int indeksMonster = pilihanTarget - 1;
                 gelombangMonster[indeksMonster].terimaDamage(power);
+                if (gelombangMonster[indeksMonster].healthPoint <= 0) {
+                    System.out.println(gelombangMonster[indeksMonster].namaMusuh + "berhasil dikalahkan!");
+
+                    if (gelombangMonster[indeksMonster] instanceof BisaLoot) {
+                        BisaLoot monsterLoot = (BisaLoot) gelombangMonster[indeksMonster];
+                        monsterLoot.jatuhkanItem();
+                    }
+                }
             }
             System.out.println("\n<<< GILIRAN MONSTER MEMBALAS >>>");
             for (int i = 0; i < gelombangMonster.length; i++) {
                 if (gelombangMonster[i].healthPoint > 0) {
-                    gelombangMonster[i].suaraKhas();
-                    gelombangMonster[i].serangPemain();
-                } else {
-                    System.out.println(gelombangMonster[i].namaMusuh + " sudah mati dan tidak bisa menyerang.");
+                    Musuh monsterAktif = gelombangMonster[i];
+                    monsterAktif.suaraKhas();
+
+                    if (monsterAktif instanceof BisaTerbang) {
+                        System.out.println("[PERINGATAN! SERANGAN UDARA TERDETEKSI]");
+                        BisaTerbang monsterTerbang = (BisaTerbang) monsterAktif;
+                        monsterTerbang.lepasLandas();
+                        monsterTerbang.seranganUdara();
+                    } else {
+                        monsterAktif.serangPemain();
+                    }
                 }
             }
             System.out.println("-----------------------------------------");
-            }
-            input.close();
-            System.out.println("Permainan Berakhir.");
         }
+        boolean semuaMati = true;
+        for (int i = 0; i < gelombangMonster.length; i++) {
+            if (gelombangMonster[i].healthPoint > 0) {
+                semuaMati = false;
+                break;
+            }
+        }
+        if (semuaMati) {
+            System.out.println("\nSELAMAT! Anda telah mengalahkan semua monster disini!");
+            isBermain = false;
+        }
+        input.close();
+        System.out.println("Permainan Berakhir.");
+    }
 }

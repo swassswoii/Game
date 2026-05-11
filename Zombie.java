@@ -1,4 +1,4 @@
-public class Zombie extends Musuh{
+public class Zombie extends Musuh implements BisaLoot {
      public Zombie() {
         super("Zombie GangnamStyle", 150);
     }
@@ -9,5 +9,9 @@ public class Zombie extends Musuh{
     }
     public void suaraKhas(){
         System.out.println(this.namaMusuh + " Grrrrr...Hungryyyy...");
+    }
+    @Override
+    public void jatuhkanItem() {
+        System.out.println(this.namaMusuh + " Zombie yang dikalahkan menjatuhkan rottenflesh." );
     }
 }
