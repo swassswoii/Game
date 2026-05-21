@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.*;
 
 public class ArenaPertarunganDinamis {
     public static void main(String[] args) {
@@ -27,8 +28,11 @@ public class ArenaPertarunganDinamis {
                 Musuh m = gelombangMonster.get(i);
                 System.out.println((i + 1) + "." + m.namaMusuh + " (HP: " + m.healthPoint + ")");
             }
+            System.out.println("------------------------");
+            System.out.println("8. [SAVE GAME] Simpan progres pertarungan");
+            System.out.println("9. [LOAD GAME] Muat progres sebelumnya");
             System.out.println("0. Kabur dari pertarungan");
-            System.out.println("\nPilih target monster: ");
+            System.out.println("\nPilih target monster: (1-" + gelombangMonster.size() + ") atau aksi lainnya: ");
 
             try {
 
@@ -39,8 +43,26 @@ public class ArenaPertarunganDinamis {
                     System.out.println("Anda lari terbirit-birit dari arena....");
                     isBermain = false;
                     continue;
-                }
+                } else if (pilihanTarget == 8) {
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("game_bocil.dat"))) {
 
+                        oos.writeObject(gelombangMonster);
+                        System.out.println(">>> BERHASIL: Game telah disimpan! <<<");
+                    } catch (IOException e) {
+                        System.out.println(">>> GAGAL: Terjadi kesalahan saat menyimpan game. " + e.getMessage());
+                    }
+                    continue;
+                } else if (pilihanTarget == 9) {
+                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("game_bocil.dat"))) {
+                        gelombangMonster = (ArrayList<Musuh>) ois.readObject();
+                        System.out.println(">>> BERHASIL: Game berhasil dimuat! <<<");
+                    } catch (FileNotFoundException e) {
+                        System.out.println(">>> GAGAL: File save game belum ada. Silahkan Save Game terlebih dahulu!");
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.out.println(">>> GAGAL: Terjadi kesalahan saat membaca file save. " + e.getMessage());
+                    }
+                    continue;
+                }
                 if (pilihanTarget < 1 || pilihanTarget > gelombangMonster.size()) {
 
                     System.out.println("Pilihan tidak valid! Anda membuang giliran.");
@@ -79,30 +101,31 @@ public class ArenaPertarunganDinamis {
                 System.out.println("\nSELAMAT! Semua monster sudah dikalahkan");
                 break;
             }
-        }
-        System.out.println("\n<<< GILIRAN MONSTER MEMBALAS >>>");
+            System.out.println("\n<<< GILIRAN MONSTER MEMBALAS >>>");
 
-        for (int i = 0; i < gelombangMonster.size(); i++) {
+            for (int i = 0; i < gelombangMonster.size(); i++) {
 
-            Musuh monsterAktif = gelombangMonster.get(i);
+                Musuh monsterAktif = gelombangMonster.get(i);
 
-            monsterAktif.suaraKhas();
+                monsterAktif.suaraKhas();
 
-            if (monsterAktif instanceof BisaTerbang) {
+                if (monsterAktif instanceof BisaTerbang) {
 
-                System.out.println(
-                        "[PERINGATAN! SERANGAN UDARA TERDETEKSI]");
+                    System.out.println(
+                            "[PERINGATAN! SERANGAN UDARA TERDETEKSI]");
 
-                BisaTerbang monsterTerbang = (BisaTerbang) monsterAktif;
+                    BisaTerbang monsterTerbang = (BisaTerbang) monsterAktif;
 
-                monsterTerbang.lepasLandas();
-                monsterTerbang.seranganUdara();
+                    monsterTerbang.lepasLandas();
+                    monsterTerbang.seranganUdara();
 
-            } else {
+                } else {
 
-                monsterAktif.serangPemain();
+                    monsterAktif.serangPemain();
+                }
             }
         }
+
         System.out.println("-----------------------------------------");
 
         boolean semuaMati = true;

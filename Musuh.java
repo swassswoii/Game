@@ -1,4 +1,5 @@
-public abstract class Musuh {
+import java.io.Serializable;
+public abstract class Musuh implements Serializable {
     protected String namaMusuh;
     protected int healthPoint;
 
